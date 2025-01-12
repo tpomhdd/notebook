@@ -14,7 +14,6 @@ import 'package:schoolnot/Screen/testbarcode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
 import 'package:schoolnot/Widget/man_widget/mytext.dart';
-
 import 'package:turn_page_transition/turn_page_transition.dart';
 
 import '../Widget/CustomDrawer.dart';
@@ -129,8 +128,8 @@ class _HomePageState extends State<HomePage> {
     50, // عدد الصفحات التي تريد إنشاؤها
         (index) => PageContent(
       title: "الصفحة ${index + 1}",
-      id: widget.idnote,
-      content:index.toString(),
+      id: widget.id,
+      content:index.toString(), idnot: widget.idnote,
     ),
   );
 
@@ -288,8 +287,9 @@ class PageContent extends StatefulWidget {
   final String title;
   final  String content;
   final String id;
+  final String idnot;
 
-  PageContent({required this.title, required this.id, required this.content});
+  PageContent({required this.title, required this.id, required this.content, required this.idnot});
 
   @override
   _PageContentState createState() => _PageContentState();
@@ -308,8 +308,7 @@ class _PageContentState extends State<PageContent> {
   Future<void> fetchAssignments() async {
     try {
       final response =
-      await http.get(Uri.parse('https://schoolnot.tpowep.com/getAssignmentall?notebook=${widget.id}'));
-      print('https://schoolnot.tpowep.com/getAssignmentall?notebook=${widget.id}');
+      await http.get(Uri.parse('https://schoolnot.tpowep.com/getAssignmentall?notebook=75'));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -324,7 +323,7 @@ class _PageContentState extends State<PageContent> {
     }
   }
 
-  @override
+
   @override
   Widget build(BuildContext context) {
     if (assignments.isEmpty) {
@@ -335,10 +334,85 @@ class _PageContentState extends State<PageContent> {
 
     // تحويل `widget.content` إلى رقم بأمان
     int index = 0;
+    try {
+      index = int.parse(widget.content);
+      if (index < 0 || index >= assignments.length) {
+        throw RangeError("Invalid index");
+      }
+    } catch (e) {
+      print("🚨 خطأ: فهرس غير صالح: $e");
+      return Scaffold(
+        bottomNavigationBar: ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text("العودة إلى الصفحة الرئيسية"),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => PrintService.printScreen(context, _globalKey),
+          child: Icon(Icons.print, size: 25),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        body: RepaintBoundary(
+          key: _globalKey,
+          child: Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(16),
+            child: Stack(
+              children: [
+                // خلفية الصفحة المسطرة
+                SingleChildScrollView(
+                  child: Column(
+                    children: List.generate(
+                      100,
+                          (index) => Container(
+                        height: 24,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
 
+
+
+                // مكان الباركود
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: Container(
+                    color: Colors.transparent,
+                    height: 150,
+                    width: 100,
+                    child: BarcodeSlider20(id: widget.id),
+                  ),
+                ),
+
+                // عنوان الصفحة
+                Positioned(
+                  bottom: 1,
+                  left: 20,
+                  child: Container(
+                    color: Colors.transparent,
+                    height: 150,
+                    width: 100,
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     final assignment = assignments[index];
-print(assignment.toString());
+
     return Scaffold(
       bottomNavigationBar: ElevatedButton(
         onPressed: () => Navigator.pop(context),
@@ -376,17 +450,22 @@ print(assignment.toString());
 
               // قائمة البيانات من API
               Positioned.fill(
-                child:assignment['page']==widget.content? Column(
+                child:
+
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                   // MyText(color: Colors.black, text: assignment['page'] ?? 'بدون وصف', size: 22),
+                   // MyText(color: Colors.black, text: widget.content ?? 'بدون وصف', size: 22),
+                    //assignment['page']==widget.content?
                     MyText(color: Colors.black, text: assignment['description'] ?? 'بدون وصف', size: 22),
                     BarcodePage(
                       url: assignment['file_path'],
                       address: assignment['assignment_name'] ?? 'بدون اسم',
                     ),
                   ],
-                ):SizedBox(),
+                ),//
               ),
 
               // مكان الباركود

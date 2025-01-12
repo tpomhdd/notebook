@@ -25,7 +25,7 @@ class BarcodePage extends StatelessWidget {
               color: Colors.blueAccent,
             ),
           ),
-
+SizedBox(height: 22,),
           BarcodeWidget(
             backgroundColor: Colors.transparent,
             barcode: Barcode.qrCode(),

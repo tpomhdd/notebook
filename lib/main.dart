@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.red,
       ),
-      home:NotebookReader()
+      home:LoginPage()
       //FrameSelectionPage(onFrameSelected: () {  Get.off(() => NotebookPage());},),
     );
   }

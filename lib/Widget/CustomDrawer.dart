@@ -4,8 +4,30 @@ import 'package:schoolnot/Screen/NotebookCustomizationScreen.dart';
 import 'package:schoolnot/Screen/NotebookPage.dart';
 import 'package:schoolnot/Screen/NotebooksScreen.dart';
 import 'package:schoolnot/Screen/assignment.dart';
+import 'package:schoolnot/teacher/index.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
+  const CustomDrawer({Key? key}) : super(key: key);
+
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  String? rol;
+  Future<void> getrol() async {
+    SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    rol= sharedPreferences.get("rol").toString();
+
+  }
+  @override
+  void initState() {
+    getrol();
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -84,9 +106,24 @@ class CustomDrawer extends StatelessWidget {
                 Get.to(Assignment());
               },
             ),
-          ],
+rol=="معلم"
+    ?
+    ListTile(
+    leading: Icon(Icons.add, color: Colors.white),
+    title: Text(
+    'صفحة المعلم',
+    style: TextStyle(color: Colors.white, fontSize: 16),
+    ),
+    onTap: () {
+    // الانتقال إلى صفحة إضافة دفتر جديد
+    Get.to(index());
+    },
+    )
+
+        :SizedBox()          ],
         ),
       ),
     );
   }
 }
+

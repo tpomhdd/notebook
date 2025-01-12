@@ -7,6 +7,7 @@ import 'package:schoolnot/Screen/NotePage.dart';
 import 'package:schoolnot/Screen/NotebookCustomizationScreen.dart';
 import 'package:schoolnot/Screen/NotebookPage.dart';
 import 'package:schoolnot/Screen/NotebooksScreen.dart';
+import 'package:schoolnot/teacher/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../FrameSelectionPage.dart';
@@ -23,10 +24,31 @@ Get.to(FrameSelectionPage(onFrameSelected: () { Get.off(LoadingPage(nextPage: No
 
     // إذا لم تكن القيمة موجودة، يبقى في الصفحة الحال}
 }}
+
+  static checkrool(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? rol = prefs.getString('rol'); // قراءة القيمة
+    if (rol == "طالب") {
+      Get.to(NotebooksScreen(phoneNumber: 'phoneNumber'));
+}
+  else if(rol=="معلم")
+    {
+      Get.to(index());
+
+    }else {
+
+    }
+  }
+
   static saveperf(String username) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setString("username", username);
     print(sharedPreferences.get("username"));
+  }
+  static saverol(String username) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString("rol", username);
+    print(sharedPreferences.get("rol"));
   }
   static saveid(String id) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

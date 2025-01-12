@@ -10,6 +10,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     myclient.checkNoebook(context);
+    myclient.checkrool(context);
 
     //controller.phoneController.text='1';
     return Scaffold(
@@ -82,9 +83,11 @@ class LoginPage extends StatelessWidget {
                   },
                 ),
                 Obx(() => ElevatedButton(
+
                   onPressed: controller.isLoading.value
                       ? null
                       : () {
+                    myclient.saverol(selectedRole.toString());
                     controller.login();
                   },
                   child: controller.isLoading.value
@@ -119,3 +122,4 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
+
