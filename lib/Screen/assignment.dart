@@ -2,11 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:schoolnot/services/NotebookService.dart';
 import 'package:schoolnot/services/myclient.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Controller/GradesController.dart';
 import '../Controller/ImageUploadController.dart';
+import '../Model/Notebook.dart';
 
 class Assignment extends StatefulWidget {
   @override
@@ -24,41 +26,37 @@ class _AssignmentState
   final TextEditingController _courseController = TextEditingController();
   final TextEditingController _tokenController = TextEditingController();
   final TextEditingController _pageController = TextEditingController();
+  late NotebookService _notebookService;
+  bool _isUploading=false;
+  List<Notebook> _notebooks = [];
+  bool _isLoading = true;
+  Notebook? _selectedNotebook; // الدفتر المختار
 
-
-  bool _isUploading = false;
-  List<dynamic> grades = []; // قائمة الصفوف
-  String? selectedGrade; // الصف المختار
-
-
-  List<dynamic> grades2 = []; // قائمة الصفوف
-  String? selectedGrade2; // الصف المختار
-
-  // جلب البيانات من API عبر الكنترولر
-  Future<void> loadGrades() async {
-    final fetchedGrades = await _gradesController.fetchGrades();
-    setState(() {
-      grades = fetchedGrades; // تخزين البيانات
-    });
-  }
-
-  // جلب البيانات من API عبر الكنترولر
-  Future<void> loadGrades2() async {
-    final fetchedGrades2 = await _gradesController2.fetchGrades();
-    setState(() {
-      grades2 = fetchedGrades2; // تخزين البيانات
-    });
-  }
-
-  // رفع الصورة وإضافة الدفتر
-  Future<void> uploadLogoAndAddNotebook() async {
- }
   @override
   void initState() {
     super.initState();
-    loadGrades(); // جلب البيانات عند تشغيل الصفحة
-    loadGrades2();
+    _notebookService = NotebookService();
+    _fetchNotebooks();
   }
+
+  Future<void> _fetchNotebooks() async {
+    try {
+      final notebooks = await _notebookService.fetchNotebooks();
+      setState(() {
+        _notebooks = notebooks;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ حدث خطأ أثناء تحميل الدفاتر: $e')),
+      );
+      print(e.toString());
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +114,93 @@ class _AssignmentState
                 SizedBox(height: 30),
                 _buildTextField('رقم الصفحة', Icons.book, _pageController),
                 SizedBox(height: 30),
+
+/*
+                DropdownButtonFormField<String>(
+                  value: selectedGrade,
+                  decoration: InputDecoration(
+                    labelText: '',
+                    labelStyle: TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.blue.withOpacity(0.2),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide.none,
+
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide(color: Colors.white54, width: 1.5),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  dropdownColor: Colors.blue.shade100,
+                  hint: Text(
+                    'اختر الدفتر',
+                    style: TextStyle(color: Colors.white),
+                  ),
+
+                  items: grades.map((grade) {
+                    return DropdownMenuItem<String>(
+                      value: _notebooks[],
+                      child: Text(
+                        grade['namenot'],
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedGrade = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 15),
+
+*/
+
+                DropdownButtonFormField<Notebook>(
+                  value: _selectedNotebook,
+                  decoration: InputDecoration(
+                    labelText: '',
+                    labelStyle: TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.blue.withOpacity(0.2),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide.none,
+
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide(color: Colors.white54, width: 1.5),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  dropdownColor: Colors.white,
+                  hint: Text(
+                    'اختر الدفتر',
+                    style: TextStyle(color: Colors.white),
+                  ),
+
+                  items: _notebooks.map((notebook) {
+                    return DropdownMenuItem<Notebook>(
+                      value: notebook,
+                      child: Text(notebook.name,style: TextStyle(color: Colors.black),),
+                    );
+                  }).toList(),
+                  onChanged: (notebook) {
+                    setState(() {
+                      _selectedNotebook = notebook;
+                    });
+                  },
+                ),
                 Center(
                   child: _isUploading
                       ? CircularProgressIndicator()
@@ -136,7 +221,8 @@ class _AssignmentState
                           _courseController.text,
                           _tokenController.text, // رابط الصورة من الخادم
                           username,
-                        _pageController.text
+                        _pageController.text,
+                        _selectedNotebook!.id.toString()
                       );
 
 

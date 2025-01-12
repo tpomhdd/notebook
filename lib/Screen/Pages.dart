@@ -14,6 +14,7 @@ import 'package:schoolnot/Screen/testbarcode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
 import 'package:schoolnot/Widget/man_widget/mytext.dart';
+
 import 'package:turn_page_transition/turn_page_transition.dart';
 
 import '../Widget/CustomDrawer.dart';
@@ -128,7 +129,7 @@ class _HomePageState extends State<HomePage> {
     50, // عدد الصفحات التي تريد إنشاؤها
         (index) => PageContent(
       title: "الصفحة ${index + 1}",
-      id: widget.id,
+      id: widget.idnote,
       content:index.toString(),
     ),
   );
@@ -307,7 +308,8 @@ class _PageContentState extends State<PageContent> {
   Future<void> fetchAssignments() async {
     try {
       final response =
-      await http.get(Uri.parse('https://schoolnot.tpowep.com/getAssignmentall'));
+      await http.get(Uri.parse('https://schoolnot.tpowep.com/getAssignmentall?notebook=${widget.id}'));
+      print('https://schoolnot.tpowep.com/getAssignmentall?notebook=${widget.id}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -323,8 +325,20 @@ class _PageContentState extends State<PageContent> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    final assignment = assignments[int.parse(widget.content)];
+    if (assignments.isEmpty) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // تحويل `widget.content` إلى رقم بأمان
+    int index = 0;
+
+
+    final assignment = assignments[index];
+print(assignment.toString());
     return Scaffold(
       bottomNavigationBar: ElevatedButton(
         onPressed: () => Navigator.pop(context),
@@ -362,19 +376,18 @@ class _PageContentState extends State<PageContent> {
 
               // قائمة البيانات من API
               Positioned.fill(
-                child: assignments.isEmpty
-                    ? Center(child: CircularProgressIndicator())
-                    :Column(
+                child:assignment['page']==widget.content? Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    MyText(color: Colors.black, text:assignment['description'] ?? 'بدون وصف', size: 22),
-                  BarcodePage(
-
-                    url: assignment['file_path'], address:   assignment['assignment_name'] ?? 'بدون اسم',) // عرض الباركود
-
-      ],
-                )     ),
+                    MyText(color: Colors.black, text: assignment['description'] ?? 'بدون وصف', size: 22),
+                    BarcodePage(
+                      url: assignment['file_path'],
+                      address: assignment['assignment_name'] ?? 'بدون اسم',
+                    ),
+                  ],
+                ):SizedBox(),
+              ),
 
               // مكان الباركود
               Positioned(
@@ -408,4 +421,5 @@ class _PageContentState extends State<PageContent> {
       ),
     );
   }
+
 }

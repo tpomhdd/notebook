@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolnot/Screen/NotePage.dart';
-import 'package:schoolnot/Screen/Notebook_Barcodes.dart';
-import 'package:schoolnot/Screen/testbarcode.dart';
-
 import '../Model/Notebook.dart';
+import '../Widget/CustomDrawer.dart';
 import '../services/NotebookService.dart';
-import 'BarcodeSlider.dart';
 
 class NotebooksScreen extends StatefulWidget {
   final String phoneNumber;
@@ -31,7 +28,7 @@ class _NotebooksScreenState extends State<NotebooksScreen> {
 
   Future<void> _fetchNotebooks() async {
     try {
-      final notebooks = await _notebookService.fetchNotebooks(widget.phoneNumber);
+      final notebooks = await _notebookService.fetchNotebooks();
       setState(() {
         _notebooks = notebooks;
         _isLoading = false;
@@ -52,11 +49,15 @@ class _NotebooksScreenState extends State<NotebooksScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-
+        appBar: AppBar(
+          title: Text('دفاتري'),
+          backgroundColor: Colors.blueAccent,
+        ),
+        drawer: CustomDrawer(),
         body: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.blue, Colors.green],
+              colors: [Colors.blueAccent, Colors.deepPurple],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -64,74 +65,89 @@ class _NotebooksScreenState extends State<NotebooksScreen> {
           child: _isLoading
               ? Center(child: CircularProgressIndicator())
               : _notebooks.isEmpty
-              ? Center(child: Text('لا توجد دفاتر متاحة.', style: TextStyle(fontSize: 18, color: Colors.white)))
-              : Container(
-            height: double.infinity,
-                child: Column(
-                  children: [
-SizedBox(height: 100,)   ,                 Center(
-                      child: Text(
-                        'دفاتري',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+              ? Center(
+            child: Text(
+              'لا توجد دفاتر متاحة.',
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          )
+              : Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: ListView.builder(
+              itemCount: _notebooks.length,
+              itemBuilder: (context, index) {
+                final notebook = _notebooks[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.to(NotePage(
+                        id: notebook.subject.toString(),
+                        idnote: notebook.id.toString(),
+                      ));
+                    },
+                    child: Card(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                        child: Row(
+                          children: [
+                            // صورة الدفتر
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
+                              ),
+                              child: Image.network(
+                                notebook.logoUrl ?? 'https://via.placeholder.com/80',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            // معلومات الدفتر
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      notebook.name.toString(),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'الصف: ${notebook.grade}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-
-                    Container(
-                      height: 555,
-                      child: ListView.builder(
-            itemCount: _notebooks.length,
-            itemBuilder: (context, index) {
-                      final notebook = _notebooks[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 10,
-                                offset: Offset(0, 4), // Shadow direction
-                              ),
-                            ],
-                          ),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.all(16),
-                            title: Text(
-                              notebook.name.toString(),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            subtitle: Text(
-                              'الصف: ${notebook.grade}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            onTap: () {
-                         notebook.subject;
-                         Get.to(NotePage(id: notebook.subject.toString(),idnote: notebook.id.toString(),));
-
-                              // توجيه المستخدم لصفحة التفاصيل (يمكنك إضافة صفحة تفاصيل هنا)
-                            },
-                          ),
-                        ),
-                      );
-            },
+                  ),
+                );
+              },
+            ),
           ),
-                    ),
-                  ],
-                ),
-              ),
         ),
       ),
     );

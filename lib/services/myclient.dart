@@ -205,7 +205,7 @@ Future add_sections(String name,String thetetcher,String classs) async {
     //var responsebody = jsonDecode(reesponse.body);
     print(reesponse.body.toString());
   }
-  Future<void> assignment(String name, String description, String file, String id,String page) async {
+  Future<void> assignment(String name, String description, String file, String id,String page,String notebook) async {
     // التحقق من الحقول
     if (name.isEmpty || description.isEmpty || file.isEmpty || id.isEmpty||page.isEmpty) {
       Get.snackbar('خطأ', 'يرجى تعبئة جميع الحقول قبل الإرسال',
@@ -220,7 +220,8 @@ Future add_sections(String name,String thetetcher,String classs) async {
       "description": description,
       "file": file,
       "id": id,
-      "page":page
+      "page":page,
+      "notebook":notebook
     };
 
     Uri url = Uri.parse('https://tpowep.com/notschoolapi/assignment.php');

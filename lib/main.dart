@@ -6,6 +6,7 @@ import 'package:schoolnot/FrameSelectionPage.dart';
 import 'package:schoolnot/Screen/AddClass.dart';
 import 'package:schoolnot/Screen/BarcodeSlider.dart';
 import 'package:schoolnot/Screen/LoginPage.dart';
+import 'package:schoolnot/Screen/NotebookReader.dart';
 import 'package:schoolnot/Screen/Notebook_Barcodes.dart';
 import 'package:schoolnot/Screen/NotebooksScreen.dart';
 import 'package:schoolnot/Screen/SignUpScreen.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.red,
       ),
-      home:LoginPage()
+      home:NotebookReader()
       //FrameSelectionPage(onFrameSelected: () {  Get.off(() => NotebookPage());},),
     );
   }

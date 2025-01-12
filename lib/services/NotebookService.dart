@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/Notebook.dart';
 
 class NotebookService {
-  Future<List<Notebook>> fetchNotebooks(String phoneNumber) async {
+  Future<List<Notebook>> fetchNotebooks() async {
     SharedPreferences sharedPreferences =
     await SharedPreferences.getInstance();
     String username = sharedPreferences.get("username").toString();
