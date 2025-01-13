@@ -112,7 +112,22 @@ class _AssignmentState
                 SizedBox(height: 30),
                 _buildTextField('الرابط', Icons.book, _tokenController),
                 SizedBox(height: 30),
-                _buildTextField('رقم الصفحة', Icons.book, _pageController),
+                TextField(
+                  controller: _pageController,
+                  decoration: InputDecoration(
+                    labelText: 'رقم الصفحة',
+                    labelStyle: TextStyle(color: Colors.white), // اللون الأبيض للتسمية
+                    hintText: ' رقم الصفخة',
+                    hintStyle: TextStyle(color: Colors.white70), // اللون الفاتح للتلميح
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0), // حواف ناعمة
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    prefixIcon: Icon(Icons.phone, color: Colors.white),
+                  ),
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.white), // النص باللون الأبيض
+                ),
                 SizedBox(height: 30),
 
 /*

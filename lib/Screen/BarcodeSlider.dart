@@ -46,43 +46,45 @@ class _BarcodeSlider20State extends State<BarcodeSlider20> {
     return
 
 
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                color: Colors.transparent,
-                height:580,
-                width: 800,
-                child: FutureBuilder<List<Map<String, String>>>(
-                  future: barcodeList,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      print('حدث خطأ: ${snapshot.error}');
-                      return Center(child: Text('حدث خطأ: ${snapshot.error}'));
-                    }
+          SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  color: Colors.transparent,
+                  height:580,
+                  width: 800,
+                  child: FutureBuilder<List<Map<String, String>>>(
+                    future: barcodeList,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        print('حدث خطأ: ${snapshot.error}');
+                        return Center(child: Text('حدث خطأ: ${snapshot.error}'));
+                      }
 
-                    final barcodes = snapshot.data ?? [];
-                    return PageView.builder(
-                      itemCount: barcodes.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                            color: Colors.transparent,
-                            width: MediaQuery.of(context).size.width, // عرض الشاشة
-                            height: MediaQuery.of(context).size.height, // ارتفاع الشاشة
+                      final barcodes = snapshot.data ?? [];
+                      return PageView.builder(
+                        itemCount: barcodes.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                              color: Colors.transparent,
+                              width: MediaQuery.of(context).size.width, // عرض الشاشة
+                              height: MediaQuery.of(context).size.height, // ارتفاع الشاشة
 
-                            child: BarcodePage(
+                              child: BarcodePage(
 
-                              url: barcodes[index]['content_url'].toString(), address:  barcodes[index]['barcode_id'].toString(),)); // عرض الباركود
+                                url: barcodes[index]['content_url'].toString(), address:  barcodes[index]['barcode_id'].toString(),)); // عرض الباركود
 
-                      },
-                    );
-                  },
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
 
 

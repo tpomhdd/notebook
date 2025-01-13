@@ -172,7 +172,7 @@ class _NotePageState extends State<NotePage> {
         SizedBox(height: 22,),        InkWell(
                   onTap: (){
                     Get.to(HomePage(id: _notebook!['Subject'].toString(),
-                      //count: _notebook!['PAGE_count'].toString()
+     //                 count: _notebook!['PAGE_count'].toString(),
                       idnote: _notebook!['id'].toString() ,));
                   },
                   

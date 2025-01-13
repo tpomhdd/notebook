@@ -120,20 +120,20 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-@override
+  @override
   Widget build(BuildContext context) {
     final GlobalKey _globalKey = GlobalKey();
 // متغير لتتبع الصفحة الحالية
-  final List<Widget> pages = List.generate(
-    50, // عدد الصفحات التي تريد إنشاؤها
-        (index) => PageContent(
-      title: "الصفحة ${index + 1}",
-      id: widget.id,
-      content:index.toString(), idnot: widget.idnote,
-    ),
-  );
+    final List<Widget> pages = List.generate(
+      50, // عدد الصفحات التي تريد إنشاؤها
+          (index) => PageContent(
+        title: "الصفحة ${index + 1}",
+        id: widget.id,
+        content:index.toString(), idnot: widget.idnote,
+      ),
+    );
 
-  return Directionality(
+    return Directionality(
       textDirection: TextDirection.ltr,
 
       child: Scaffold(
@@ -308,7 +308,7 @@ class _PageContentState extends State<PageContent> {
   Future<void> fetchAssignments() async {
     try {
       final response =
-      await http.get(Uri.parse('https://schoolnot.tpowep.com/getAssignmentall?notebook=75'));
+      await http.get(Uri.parse('https://schoolnot.tpowep.com/getAssignmentall?notebook=${widget.idnot}'));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -331,11 +331,11 @@ class _PageContentState extends State<PageContent> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-
+int page=int.parse(widget.content);
     // تحويل `widget.content` إلى رقم بأمان
-    int index = 0;
+    int index = page;
     try {
-      index = int.parse(widget.content);
+      index = page-1;
       if (index < 0 || index >= assignments.length) {
         throw RangeError("Invalid index");
       }
@@ -452,20 +452,21 @@ class _PageContentState extends State<PageContent> {
               Positioned.fill(
                 child:
 
+                assignment['page']==widget.content?
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                   // MyText(color: Colors.black, text: assignment['page'] ?? 'بدون وصف', size: 22),
-                   // MyText(color: Colors.black, text: widget.content ?? 'بدون وصف', size: 22),
-                    //assignment['page']==widget.content?
+                     MyText(color: Colors.black, text: assignment['page'] ?? 'بدون وصف', size: 22),
+                     MyText(color: Colors.black, text: widget.content ?? 'بدون وصف', size: 22),
                     MyText(color: Colors.black, text: assignment['description'] ?? 'بدون وصف', size: 22),
                     BarcodePage(
                       url: assignment['file_path'],
                       address: assignment['assignment_name'] ?? 'بدون اسم',
                     ),
+
                   ],
-                ),//
+                ):SizedBox(),//
               ),
 
               // مكان الباركود
@@ -489,7 +490,7 @@ class _PageContentState extends State<PageContent> {
                   height: 150,
                   width: 100,
                   child: Text(
-                    widget.title,
+                    "الصفحة ${  page--}",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
