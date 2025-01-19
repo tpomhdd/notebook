@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "960185569778",
+    "project_id": "tposhop-fc09b",
+    "storage_bucket": "tposhop-fc09b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960185569778:android:6a3586471760ad67d91b6b",
+        "android_client_info": {
+          "package_name": "com.tpowep.ecommercecourse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfcAimiuvZWd10vOCPXCQ1QioNcDDq1jI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960185569778:android:94035481370c050dd91b6b",
+        "android_client_info": {
+          "package_name": "com.tpowep.schoolnot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfcAimiuvZWd10vOCPXCQ1QioNcDDq1jI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
